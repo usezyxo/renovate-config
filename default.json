@@ -1,0 +1,134 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "timezone": "Asia/Kolkata",
+  "schedule": [
+    "* 9 * * 0,1,3,5"
+  ],
+  "automergeSchedule": [
+    "* 21-22 * * 0,1,3,5"
+  ],
+
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":dependencyDashboard",
+    ":disableRateLimiting",
+    "helpers:pinGitHubActionDigests",
+    ":configMigration",
+    "abandonments:recommended",
+    "workarounds:all",
+    "group:definitelyTyped",
+    "group:monorepos",
+    "group:nodeJs",
+    "group:githubArtifactActions",
+    "group:react",
+    "group:pnpm",
+    "group:vite",
+    "group:eslintMonorepo",
+    "group:typescript-eslintMonorepo",
+    "group:storybookMonorepo",
+    "group:astroMonorepo",
+    "group:vitestMonorepo",
+    "group:linters"
+  ],
+
+  "rangeStrategy": "bump",
+
+  "gitIgnoredAuthors": ["66853113+pre-commit-ci[bot]@users.noreply.github.com", "114827586+autofix-ci[bot]@users.noreply.github.com"],
+
+  "ignoreAuthors": ["pre-commit-ci[bot]", "autofix-ci[bot]"],
+
+  "osvVulnerabilityAlerts": true,
+
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": false
+  },
+
+  "minimumReleaseAge": "3 days",
+  "rebaseWhen": "auto",
+
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+
+  "automerge": true,
+  "automergeStrategy": "squash",
+  
+  "stopUpdatingLabel": "hold",
+
+  "dependencyDashboardAutoclose": false,
+
+  "lockFileMaintenance": {
+    "enabled": false,
+    "schedule": ["on sunday"],
+    "groupName": "lockfile maintenance",
+    "automerge": true
+  },
+
+  "postUpdateOptions": ["pnpmDedupe"],
+
+  "packageRules": [
+    {
+      "description": "Automerge security/vulnerability fixes, but ONLY non-major",
+      "matchUpdateTypes": ["patch", "minor"],
+      "matchJsonata": ["isVulnerabilityAlert"],
+      "automerge": true,
+      "minimumReleaseAge": "0 days",
+      "addLabels": ["security", "{{updateType}}"]
+    },
+    {
+      "description": "Never automerge major security updates - needs manual review",
+      "matchUpdateTypes": ["major"],
+      "matchJsonata": ["isVulnerabilityAlert"],
+      "automerge": false,
+      "addLabels": ["security", "breaking-change", "major"]
+    },
+    {
+      "description": "Never automerge major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "addLabels": ["breaking-change", "{{updateType}}"]
+    },
+    {
+      "description": "Automerge minor and patch updates",
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "addLabels": ["{{updateType}}"]
+    },
+    {
+      "description": "Group Prettier packages",
+      "matchPackagePatterns": ["^prettier", "^@prettier/"],
+      "groupName": "prettier",
+      "addLabels": ["prettier"]
+    },
+    {
+      "description": "Never automerge major GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "addLabels": ["github-actions", "breaking-change", "{{updateType}}"]
+    },
+    {
+      "description": "Automerge minor and patch GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin"],
+      "groupName": "github actions",
+      "automerge": true,
+      "addLabels": ["github-actions", "{{updateType}}"]
+    },
+    {
+      "description": "Group Docker non-major updates",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "docker",
+      "automerge": true,
+      "addLabels": ["docker", "{{updateType}}"]
+    },
+    {
+      "description": "Do not update manually managed Node version constraints",
+      "matchDepNames": ["node"],
+      "matchDepTypes": ["peerDependencies", "engines"],
+      "enabled": false
+    }
+  ]
+}
